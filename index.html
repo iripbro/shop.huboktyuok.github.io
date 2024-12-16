@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интернет-магазин</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Интернет-магазин</h1>
+        <div class="cart-icon" id="cart-icon">
+            <span>🛒</span>
+            <div class="cart-count" id="cart-count">0</div>
+        </div>
+        
+        <div class="cart" id="cart">
+            <h2>Корзина</h2>
+            <ul id="cart-list"></ul>
+        </div>
+
+        <div class="product">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSergYyKtwZo-1wTXTYEIu6f6AbD-Pcfy98A&s" alt="Еблан" class="product-image">
+            <h2>Еблан</h2>
+            <p>Цена: <span class="product-price">1000₽</span></p>
+            <button class="buy-button" data-product="Еблан" data-price="1000">Добавить в корзину</button>
+        </div>
+        <div class="product">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPRbAPPW_QVO9CeKIh9NAOe-s6NEpkJZIPlQ&s" alt="Песпатрон" class="product-image">
+            <h2>Песпатрон</h2>
+            <p>Цена: <span class="product-price">1500₽</span></p>
+            <button class="buy-button" data-product="Песпатрон" data-price="1500">Добавить в корзину</button>
+        </div>
+        <div class="product">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7YEvCAAioqvnAqYiHCTk6BjbPhIyowDLCKQ&s" alt="Сигма" class="product-image">
+            <h2>Сигма</h2>
+            <p>Цена: <span class="product-price">2000₽</span></p>
+            <button class="buy-button" data-product="Сигма" data-price="2000">Добавить в корзину</button>
+        </div>
+    </div>
+
+    <script>
+        const cart = {};
+        const cartIcon = document.getElementById('cart-icon');
+        const cartCount = document.getElementById('cart-count');
+        const cartList = document.getElementById('cart-list');
+        const cartDisplay = document.getElementById('cart');
+
+        cartIcon.addEventListener('click', function() {
+            cartDisplay.classList.toggle('visible');
+        });
+
+        document.querySelectorAll('.buy-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const productName = this.getAttribute('data-product');
+                const productPrice = this.getAttribute('data-price');
+
+                // Увеличиваем количество товара в корзине
+                if (!cart[productName]) {
+                    cart[productName] = { quantity: 1, price: productPrice };
+                } else {
+                    cart[productName].quantity++;
+                }
+                updateCart();
+            });
+        });
+
+        function updateCart() {
+            let totalItems = 0; // Переменная для общего количества товаров
+            cartList.innerHTML = '';
+
+            for (const [item, { quantity, price }] of Object.entries(cart)) {
+                const li = document.createElement('li');
+                li.textContent = `${item} (x${quantity}) - Цена: ${price}₽`;
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Убрать';
+                removeButton.className = 'remove-button';
+                removeButton.addEventListener('click', function() {
+                    removeFromCart(item);
+                });
+
+                li.appendChild(removeButton);
+                cartList.appendChild(li);
+                totalItems += quantity; // Увеличиваем общее количество товаров
+            }
+
+            cartCount.textContent = totalItems; // Обновляем общее количество товаров в корзине
+        }
+
+        function removeFromCart(item) {
+            if (cart[item].quantity > 1) {
+                cart[item].quantity--; // Уменьшаем количество товара
+            } else {
+                delete cart[item]; // Убираем товар, если количество 0
+            }
+            updateCart();
+        }
+    </script>
+</body>
+</html>
